@@ -1,4 +1,4 @@
-# DirectoryPackagesPropsUpdater
+# DirectoryPackagesPropsUpdater&nbsp;[![Build Status](https://github.com/georg-jung/DirectoryPackagesPropsUpdater/actions/workflows/ci.yml/badge.svg)](https://github.com/georg-jung/DirectoryPackagesPropsUpdater/actions/workflows/ci.yml)&nbsp;[![NuGet version (DirectoryPackagesPropsUpdater)](https://img.shields.io/nuget/v/DirectoryPackagesPropsUpdater.svg?style=flat)](https://www.nuget.org/packages/DirectoryPackagesPropsUpdater/)&nbsp;[![codecov](https://codecov.io/gh/georg-jung/DirectoryPackagesPropsUpdater/graph/badge.svg)](https://app.codecov.io/gh/georg-jung/DirectoryPackagesPropsUpdater)
 
 A .NET tool that checks for outdated NuGet packages in `Directory.Packages.props` and updates them. Like [dotnet-outdated](https://github.com/dotnet-outdated/dotnet-outdated), but designed for [Central Package Management](https://learn.microsoft.com/nuget/consume-packages/central-package-management) -- it just works directly on the props file instead of applying dependency resolution approaches.
 

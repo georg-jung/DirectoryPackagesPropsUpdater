@@ -4,7 +4,7 @@ This document captures the project's conventions and style for AI agents and con
 
 ## Project Overview
 
-A .NET CLI tool (`dotnet package-update`) that updates NuGet packages in `Directory.Packages.props` files. Queries the NuGet API directly -- no `dotnet restore` needed.
+A .NET CLI tool (`update-cpm-versions`) that updates NuGet packages in `Directory.Packages.props` files. Queries the NuGet API directly -- no `dotnet restore` needed.
 
 ## Tech Stack
 

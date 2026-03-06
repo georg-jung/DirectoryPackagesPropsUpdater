@@ -273,4 +273,123 @@ public class IntegrationTests
 
         await Assert.That(exitCode).IsEqualTo(0);
     }
+
+    // --- Prerelease package tests ---
+    // StyleCop.Analyzers: latest stable is 1.1.118, prerelease 1.2.0-beta.507 exists.
+    // The prerelease is higher than all stable versions in the 1.x range.
+
+    [Test]
+    public async Task Prerelease_HigherThanAllStable_NoUpdate()
+    {
+        // 1.2.0-beta.507 > 1.1.118 (latest stable), so no stable update exists
+        var path = WriteTempProps("""
+            <Project>
+              <ItemGroup>
+                <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.507" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        var options = new UpdateOptions { VersionMode = VersionMode.Major };
+        var exitCode = await PackageUpdater.RunAsync(path, options, null, CancellationToken.None);
+
+        await Assert.That(exitCode).IsEqualTo(0);
+
+        var (_, packages) = PackagePropsParser.Parse(path);
+        // Should remain unchanged — no stable version is higher
+        await Assert.That(packages[0].Version)
+            .IsEqualTo(NuGetVersion.Parse("1.2.0-beta.507"));
+    }
+
+    [Test]
+    public async Task Prerelease_OlderStableGetsUpdatedToLatestStable()
+    {
+        // 1.0.0 is old; latest stable 1.1.118 should be offered in minor mode
+        var path = WriteTempProps("""
+            <Project>
+              <ItemGroup>
+                <PackageVersion Include="StyleCop.Analyzers" Version="1.0.0" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        var options = new UpdateOptions { VersionMode = VersionMode.Minor };
+        var exitCode = await PackageUpdater.RunAsync(path, options, null, CancellationToken.None);
+
+        await Assert.That(exitCode).IsEqualTo(0);
+
+        var (_, packages) = PackagePropsParser.Parse(path);
+        // Should update to 1.1.118 (latest stable in 1.x), skipping all prereleases
+        await Assert.That(packages[0].Version)
+            .IsEqualTo(NuGetVersion.Parse("1.1.118"));
+    }
+
+    [Test]
+    public async Task Prerelease_PatchOnlyFromOldStable()
+    {
+        // In patch-only mode from 1.0.0, should update to 1.0.2 (latest 1.0.x stable)
+        var path = WriteTempProps("""
+            <Project>
+              <ItemGroup>
+                <PackageVersion Include="StyleCop.Analyzers" Version="1.0.0" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        var options = new UpdateOptions { VersionMode = VersionMode.PatchOnly };
+        var exitCode = await PackageUpdater.RunAsync(path, options, null, CancellationToken.None);
+
+        await Assert.That(exitCode).IsEqualTo(0);
+
+        var (_, packages) = PackagePropsParser.Parse(path);
+        await Assert.That(packages[0].Version)
+            .IsEqualTo(NuGetVersion.Parse("1.0.2"));
+    }
+
+    // --- 4-part (non-SemVer) version tests ---
+    // StyleCop.Analyzers.Unstable uses versions like 1.2.0.435, 1.2.0.507, 1.2.0.556.
+
+    [Test]
+    public async Task FourPartVersion_UpdatesWithinBand()
+    {
+        // 1.2.0.435 should update to the latest 1.2.0.xxx
+        var path = WriteTempProps("""
+            <Project>
+              <ItemGroup>
+                <PackageVersion Include="StyleCop.Analyzers.Unstable" Version="1.2.0.435" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        var options = new UpdateOptions { VersionMode = VersionMode.PatchOnly };
+        var exitCode = await PackageUpdater.RunAsync(path, options, null, CancellationToken.None);
+
+        await Assert.That(exitCode).IsEqualTo(0);
+
+        var (_, packages) = PackagePropsParser.Parse(path);
+        await Assert.That(packages[0].Version)
+            .IsGreaterThan(NuGetVersion.Parse("1.2.0.435"));
+    }
+
+    [Test]
+    public async Task FourPartVersion_LatestIsUnchanged()
+    {
+        // 1.2.0.556 is (at time of writing) the latest; should not change
+        var path = WriteTempProps("""
+            <Project>
+              <ItemGroup>
+                <PackageVersion Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        var options = new UpdateOptions { VersionMode = VersionMode.Major };
+        var exitCode = await PackageUpdater.RunAsync(path, options, null, CancellationToken.None);
+
+        await Assert.That(exitCode).IsEqualTo(0);
+
+        var (_, packages) = PackagePropsParser.Parse(path);
+        await Assert.That(packages[0].Version)
+            .IsEqualTo(NuGetVersion.Parse("1.2.0.556"));
+    }
 }

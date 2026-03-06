@@ -163,7 +163,14 @@ static class PackageUpdater
             return UpdateKind.Minor;
         }
 
-        if (updated.Patch != current.Patch || (current.IsPrerelease && !updated.IsPrerelease))
+        if (updated.Patch != current.Patch)
+        {
+            return UpdateKind.Patch;
+        }
+
+        // Revision difference (4-part versions like 1.2.0.507) or
+        // prerelease-to-stable (1.0.0-rc.1 -> 1.0.0) — treat as patch-level.
+        if (updated > current)
         {
             return UpdateKind.Patch;
         }

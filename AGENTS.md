@@ -36,8 +36,8 @@ A .NET CLI tool (`dotnet package-update`) that updates NuGet packages in `Direct
 
 ## Testing
 
-- TUnit-based tests in `test/DirectoryPackagesPropsUpdater.Tests/`
-- Run via `dotnet run --project test/DirectoryPackagesPropsUpdater.Tests`
+- TUnit-based tests in `test/UpdateCpmVersions.Tests/`
+- Run via `dotnet run --project test/UpdateCpmVersions.Tests`
 - Tests use temp files for parser tests, pure functions for version logic
 - `[Arguments]` attribute for parameterized tests
 - Async assertions: `await Assert.That(x).IsEqualTo(y)`

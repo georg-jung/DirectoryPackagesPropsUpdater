@@ -1,4 +1,4 @@
-namespace DirectoryPackagesPropsUpdater;
+namespace UpdateCpmVersions;
 
 static class GlobMatcher
 {

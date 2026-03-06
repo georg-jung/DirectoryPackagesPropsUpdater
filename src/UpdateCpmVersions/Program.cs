@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-using DirectoryPackagesPropsUpdater;
+using UpdateCpmVersions;
 
 Argument<string?> pathArg = new("path")
 {

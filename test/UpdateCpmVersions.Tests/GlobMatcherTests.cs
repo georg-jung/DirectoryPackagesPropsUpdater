@@ -1,6 +1,6 @@
-using DirectoryPackagesPropsUpdater;
+using UpdateCpmVersions;
 
-namespace DirectoryPackagesPropsUpdater.Tests;
+namespace UpdateCpmVersions.Tests;
 
 public class GlobMatcherTests
 {

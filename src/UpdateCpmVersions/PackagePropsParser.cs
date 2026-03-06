@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 using NuGet.Versioning;
 
-namespace DirectoryPackagesPropsUpdater;
+namespace UpdateCpmVersions;
 
 record PackageEntry(string Id, NuGetVersion Version, XElement Element);
 

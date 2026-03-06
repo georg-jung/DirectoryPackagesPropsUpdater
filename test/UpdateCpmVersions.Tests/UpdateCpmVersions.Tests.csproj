@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DirectoryPackagesPropsUpdater\DirectoryPackagesPropsUpdater.csproj" />
+    <ProjectReference Include="..\..\src\UpdateCpmVersions\UpdateCpmVersions.csproj" />
   </ItemGroup>
 
 </Project>

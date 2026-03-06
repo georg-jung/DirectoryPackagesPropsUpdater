@@ -1,8 +1,8 @@
 using NuGet.Versioning;
 
-using DirectoryPackagesPropsUpdater;
+using UpdateCpmVersions;
 
-namespace DirectoryPackagesPropsUpdater.Tests;
+namespace UpdateCpmVersions.Tests;
 
 public class PackagePropsParserTests
 {

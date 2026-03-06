@@ -2,7 +2,7 @@ using System.Text.Json;
 
 using NuGet.Versioning;
 
-namespace DirectoryPackagesPropsUpdater;
+namespace UpdateCpmVersions;
 
 sealed class NuGetClient : IDisposable
 {

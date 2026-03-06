@@ -1,6 +1,6 @@
 using NuGet.Versioning;
 
-namespace DirectoryPackagesPropsUpdater;
+namespace UpdateCpmVersions;
 
 static class PackageUpdater
 {

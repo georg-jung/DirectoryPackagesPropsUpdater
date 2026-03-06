@@ -5,14 +5,14 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>update-cpm-versions</ToolCommandName>
     <PackageId>georg-jung.update-cpm-versions</PackageId>
-    <Version>0.1.0</Version>
+    <RollForward>LatestMajor</RollForward>
     <Authors>Georg Jung</Authors>
     <Description>Check and update NuGet package versions in Directory.Packages.props (Central Package Management)</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/georg-jung/update-cpm-versions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/georg-jung/update-cpm-versions</RepositoryUrl>
     <PackageIcon>logo-nuget.png</PackageIcon>
-    <PackageTags>nuget;packages;update;directory-packages-props;central-package-management;cpm;dotnet-tool</PackageTags>
+    <PackageTags>nuget;packages;update;directory-packages-props;central-package-management;cpm;dotnet-tool;dependencies;chore;update-dependencies</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 

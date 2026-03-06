@@ -1,10 +1,5 @@
 {
-  "sdk": {
-    "allowPrerelease": true
-  },
-  "tools": {
-    "dotnet-test": {
-      "version": "2"
-    }
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
   }
 }

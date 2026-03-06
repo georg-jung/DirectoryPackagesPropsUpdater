@@ -7,7 +7,7 @@ A .NET tool that checks for outdated NuGet packages in `Directory.Packages.props
 ## Installation
 
 ```shell
-dotnet tool install -g update-cpm-versions
+dotnet tool install -g georg-jung.update-cpm-versions
 ```
 
 ## Usage

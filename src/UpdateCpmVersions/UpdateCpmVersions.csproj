@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>update-cpm-versions</ToolCommandName>
-    <PackageId>update-cpm-versions</PackageId>
+    <PackageId>georg-jung.update-cpm-versions</PackageId>
     <Version>0.1.0</Version>
     <Authors>Georg Jung</Authors>
     <Description>Check and update NuGet package versions in Directory.Packages.props (Central Package Management)</Description>

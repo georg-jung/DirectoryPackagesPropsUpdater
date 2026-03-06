@@ -14,20 +14,20 @@ dotnet tool install -g georg-jung.update-cpm-versions
 
 ```shell
 # Update packages in the current directory (finds Directory.Packages.props automatically)
-dotnet update-cpm-versions
+update-cpm-versions
 
 # Preview changes without modifying the file
-dotnet update-cpm-versions --dry-run
+update-cpm-versions --dry-run
 
 # Specify a path
-dotnet update-cpm-versions ./path/to/directory
-dotnet update-cpm-versions ./path/to/Directory.Packages.props
+update-cpm-versions ./path/to/directory
+update-cpm-versions ./path/to/Directory.Packages.props
 
 # Allow major version updates
-dotnet update-cpm-versions --major
+update-cpm-versions --major
 
 # Only update patch versions
-dotnet update-cpm-versions --patch-only
+update-cpm-versions --patch-only
 ```
 
 ## Filtering
@@ -36,20 +36,20 @@ Use `--include` or `--exclude` (mutually exclusive) with glob patterns to contro
 
 ```shell
 # Only update Microsoft packages
-dotnet update-cpm-versions --include "Microsoft.*"
+update-cpm-versions --include "Microsoft.*"
 
 # Update everything except Contoso packages
-dotnet update-cpm-versions --exclude "Contoso.*"
+update-cpm-versions --exclude "Contoso.*"
 
 # Multiple patterns
-dotnet update-cpm-versions --exclude "Contoso.*" --exclude "Legacy.*"
+update-cpm-versions --exclude "Contoso.*" --exclude "Legacy.*"
 ```
 
 Use `--pin-major` with `--major` to allow major updates globally but keep specific packages on their current major version:
 
 ```shell
 # Update all packages including major, but keep EF Core on its current major
-dotnet update-cpm-versions --major --pin-major "Microsoft.EntityFrameworkCore.*"
+update-cpm-versions --major --pin-major "Microsoft.EntityFrameworkCore.*"
 ```
 
 ## Options

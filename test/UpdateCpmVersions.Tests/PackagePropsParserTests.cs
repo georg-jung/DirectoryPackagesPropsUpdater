@@ -15,6 +15,17 @@ public class PackagePropsParserTests
         return filePath;
     }
 
+    // On macOS /var is a symlink to /private/var; Directory.GetCurrentDirectory()
+    // resolves it while Path.GetFullPath does not, so resolve upfront.
+    private static string RealPath(string dir)
+    {
+        var saved = Directory.GetCurrentDirectory();
+        Directory.SetCurrentDirectory(dir);
+        var real = Directory.GetCurrentDirectory();
+        Directory.SetCurrentDirectory(saved);
+        return real;
+    }
+
     [Test]
     public async Task Parse_ExtractsPackageVersions()
     {
@@ -167,9 +178,9 @@ public class PackagePropsParserTests
     [Test]
     public async Task FindFile_WalksUpToParentDirectory()
     {
-        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        var root = RealPath(Directory.CreateDirectory(
+            Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "sub")).Parent!.FullName);
         var subDir = Path.Combine(root, "sub");
-        Directory.CreateDirectory(subDir);
         var filePath = Path.Combine(root, "Directory.Packages.props");
         File.WriteAllText(filePath, "<Project />");
 
@@ -177,11 +188,7 @@ public class PackagePropsParserTests
         try
         {
             Directory.SetCurrentDirectory(subDir);
-            // Use GetCurrentDirectory() to get the symlink-resolved real path (e.g. /private/var on macOS)
-            var realParent = Path.GetDirectoryName(Directory.GetCurrentDirectory())!;
-            var expected = Path.Combine(realParent, "Directory.Packages.props");
-            var found = PackagePropsParser.FindFile(null);
-            await Assert.That(found).IsEqualTo(expected);
+            await Assert.That(PackagePropsParser.FindFile(null)).IsEqualTo(Path.GetFullPath(filePath));
         }
         finally
         {
@@ -192,7 +199,8 @@ public class PackagePropsParserTests
     [Test]
     public async Task FindFile_WalksUpMultipleLevels()
     {
-        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        var root = RealPath(Directory.CreateDirectory(
+            Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString())).FullName);
         var deepDir = Path.Combine(root, "a", "b", "c");
         Directory.CreateDirectory(deepDir);
         var filePath = Path.Combine(root, "Directory.Packages.props");
@@ -202,14 +210,7 @@ public class PackagePropsParserTests
         try
         {
             Directory.SetCurrentDirectory(deepDir);
-            // Use GetCurrentDirectory() to get the symlink-resolved real path (e.g. /private/var on macOS)
-            // Walk up 3 levels (c -> b -> a -> root) to reach the real root
-            var realRoot = Directory.GetCurrentDirectory();
-            for (var i = 0; i < 3; i++)
-                realRoot = Path.GetDirectoryName(realRoot)!;
-            var expected = Path.Combine(realRoot, "Directory.Packages.props");
-            var found = PackagePropsParser.FindFile(null);
-            await Assert.That(found).IsEqualTo(expected);
+            await Assert.That(PackagePropsParser.FindFile(null)).IsEqualTo(Path.GetFullPath(filePath));
         }
         finally
         {
@@ -239,8 +240,8 @@ public class PackagePropsParserTests
     [Test]
     public async Task FindFile_FindsInCurrentDirectory()
     {
-        var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(dir);
+        var dir = RealPath(Directory.CreateDirectory(
+            Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString())).FullName);
         var filePath = Path.Combine(dir, "Directory.Packages.props");
         File.WriteAllText(filePath, "<Project />");
 
@@ -248,10 +249,7 @@ public class PackagePropsParserTests
         try
         {
             Directory.SetCurrentDirectory(dir);
-            // Use GetCurrentDirectory() to get the symlink-resolved real path (e.g. /private/var on macOS)
-            var expected = Path.Combine(Directory.GetCurrentDirectory(), "Directory.Packages.props");
-            var found = PackagePropsParser.FindFile(null);
-            await Assert.That(found).IsEqualTo(expected);
+            await Assert.That(PackagePropsParser.FindFile(null)).IsEqualTo(Path.GetFullPath(filePath));
         }
         finally
         {

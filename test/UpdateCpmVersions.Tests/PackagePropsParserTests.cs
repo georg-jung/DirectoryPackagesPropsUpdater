@@ -163,4 +163,88 @@ public class PackagePropsParserTests
         await Assert.That(() => PackagePropsParser.FindFile(dir))
             .Throws<FileNotFoundException>();
     }
+
+    [Test]
+    public async Task FindFile_WalksUpToParentDirectory()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        var subDir = Path.Combine(root, "sub");
+        Directory.CreateDirectory(subDir);
+        var filePath = Path.Combine(root, "Directory.Packages.props");
+        File.WriteAllText(filePath, "<Project />");
+
+        var originalDir = Directory.GetCurrentDirectory();
+        try
+        {
+            Directory.SetCurrentDirectory(subDir);
+            var found = PackagePropsParser.FindFile(null);
+            await Assert.That(found).IsEqualTo(Path.GetFullPath(filePath));
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDir);
+        }
+    }
+
+    [Test]
+    public async Task FindFile_WalksUpMultipleLevels()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        var deepDir = Path.Combine(root, "a", "b", "c");
+        Directory.CreateDirectory(deepDir);
+        var filePath = Path.Combine(root, "Directory.Packages.props");
+        File.WriteAllText(filePath, "<Project />");
+
+        var originalDir = Directory.GetCurrentDirectory();
+        try
+        {
+            Directory.SetCurrentDirectory(deepDir);
+            var found = PackagePropsParser.FindFile(null);
+            await Assert.That(found).IsEqualTo(Path.GetFullPath(filePath));
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDir);
+        }
+    }
+
+    [Test]
+    public async Task FindFile_ThrowsWhenNotFoundInTree()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(dir);
+
+        var originalDir = Directory.GetCurrentDirectory();
+        try
+        {
+            Directory.SetCurrentDirectory(dir);
+            await Assert.That(() => PackagePropsParser.FindFile(null))
+                .Throws<FileNotFoundException>();
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDir);
+        }
+    }
+
+    [Test]
+    public async Task FindFile_FindsInCurrentDirectory()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(dir);
+        var filePath = Path.Combine(dir, "Directory.Packages.props");
+        File.WriteAllText(filePath, "<Project />");
+
+        var originalDir = Directory.GetCurrentDirectory();
+        try
+        {
+            Directory.SetCurrentDirectory(dir);
+            var found = PackagePropsParser.FindFile(null);
+            await Assert.That(found).IsEqualTo(Path.GetFullPath(filePath));
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDir);
+        }
+    }
 }

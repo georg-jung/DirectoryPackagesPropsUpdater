@@ -15,9 +15,16 @@ public class PackagePropsParserTests
         return filePath;
     }
 
-    // On macOS /var is a symlink to /private/var; resolve upfront so Path.GetFullPath matches.
-    private static string RealPath(string dir) =>
-        Directory.ResolveLinkTarget(dir, returnFinalTarget: true)?.FullName ?? dir;
+    // On macOS /var is a symlink to /private/var; GetCurrentDirectory() resolves
+    // intermediate symlinks while Path.GetFullPath does not, so resolve upfront.
+    private static string RealPath(string dir)
+    {
+        var saved = Directory.GetCurrentDirectory();
+        Directory.SetCurrentDirectory(dir);
+        var real = Directory.GetCurrentDirectory();
+        Directory.SetCurrentDirectory(saved);
+        return real;
+    }
 
     [Test]
     public async Task Parse_ExtractsPackageVersions()

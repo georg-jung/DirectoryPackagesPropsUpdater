@@ -177,8 +177,11 @@ public class PackagePropsParserTests
         try
         {
             Directory.SetCurrentDirectory(subDir);
+            // Use GetCurrentDirectory() to get the symlink-resolved real path (e.g. /private/var on macOS)
+            var realParent = Path.GetDirectoryName(Directory.GetCurrentDirectory())!;
+            var expected = Path.Combine(realParent, "Directory.Packages.props");
             var found = PackagePropsParser.FindFile(null);
-            await Assert.That(found).IsEqualTo(Path.GetFullPath(filePath));
+            await Assert.That(found).IsEqualTo(expected);
         }
         finally
         {
@@ -199,8 +202,14 @@ public class PackagePropsParserTests
         try
         {
             Directory.SetCurrentDirectory(deepDir);
+            // Use GetCurrentDirectory() to get the symlink-resolved real path (e.g. /private/var on macOS)
+            // Walk up 3 levels (c -> b -> a -> root) to reach the real root
+            var realRoot = Directory.GetCurrentDirectory();
+            for (var i = 0; i < 3; i++)
+                realRoot = Path.GetDirectoryName(realRoot)!;
+            var expected = Path.Combine(realRoot, "Directory.Packages.props");
             var found = PackagePropsParser.FindFile(null);
-            await Assert.That(found).IsEqualTo(Path.GetFullPath(filePath));
+            await Assert.That(found).IsEqualTo(expected);
         }
         finally
         {
@@ -239,8 +248,10 @@ public class PackagePropsParserTests
         try
         {
             Directory.SetCurrentDirectory(dir);
+            // Use GetCurrentDirectory() to get the symlink-resolved real path (e.g. /private/var on macOS)
+            var expected = Path.Combine(Directory.GetCurrentDirectory(), "Directory.Packages.props");
             var found = PackagePropsParser.FindFile(null);
-            await Assert.That(found).IsEqualTo(Path.GetFullPath(filePath));
+            await Assert.That(found).IsEqualTo(expected);
         }
         finally
         {
